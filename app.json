@@ -1,0 +1,39 @@
+{
+  "expo": {
+    "name": "Parent-Teacher-Meeting-App",
+    "slug": "Parent-Teacher-Meeting-App",
+    "scheme": "com.siddhantpallod.parentteachermeetingapp",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.siddhantpallod.parentteachermeetingapp"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "package": "com.siddhantpallod.parentteachermeetingapp",
+      "googleServicesFile": "./google-services.json"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "62e728c6-535c-4199-8cb8-d2eb0e573f83"
+      }
+    }
+  }
+}
