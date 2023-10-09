@@ -9,7 +9,6 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import Login from './screens/Login';
 import ParentDashboard from './screens/Parents/ParentDashboard';
 import ParentViewEvent from './screens/Parents/ParentViewEvent';
-import ParentViewTeacher from './screens/Parents/ParentViewTeacher';
 
 const Stack = createNativeStackNavigator();
 
@@ -34,7 +33,6 @@ export default function App(){
           <Stack.Screen name = 'Teacher_View_Event' component={TeacherViewEvent} options={{headerShown: false}}/>
           <Stack.Screen name = 'Parent_Dashboard' component={ParentDashboard} options={{headerShown: false}}/>
           <Stack.Screen name = 'Parent_View_Event' component={ParentViewEvent} options={{headerShown: false}}/>
-          <Stack.Screen name = 'Parent_View_Teacher' component={ParentViewTeacher} options={{headerShown: false}}/>
         </Stack.Navigator>
       </NavigationContainer>
 

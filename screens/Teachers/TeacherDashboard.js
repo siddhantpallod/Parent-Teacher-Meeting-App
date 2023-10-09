@@ -10,7 +10,7 @@ import { db } from '../../config'
 const { width, height } = Dimensions.get('window')
 
 
-export class AdminDashboard extends React.Component {
+export class TeacherDashboard extends React.Component {
 
   constructor() {
     super()
@@ -132,4 +132,4 @@ export class AdminDashboard extends React.Component {
   }
 }
 
-export default AdminDashboard
+export default TeacherDashboard

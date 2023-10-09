@@ -74,8 +74,9 @@ const Login = ({ navigation }) => {
         })
         console.log(user)
       }
+      
 
-      else if (user.email == 'siddhantpallod@peterspanchgani.org') {
+      else if (user.email == 'siddhantpallod@gmail.com') {
         navigation.navigate('Teacher_Dashboard', {
           email: user.email,
           name: user.name,

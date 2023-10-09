@@ -1,12 +1,14 @@
-import { Text, View, Dimensions, TouchableOpacity, SafeAreaView, FlatList, ScrollView } from 'react-native';
+import { Text, View, Dimensions, TouchableOpacity, SafeAreaView, FlatList, ScrollView} from 'react-native';
 import React from 'react';
 import { Header, Card, Avatar } from 'react-native-elements'
 import { StatusBar } from 'expo-status-bar';
 import { Image } from 'expo-image';
-import { Dropdown } from 'react-native-element-dropdown';
-import { collection, getDocs } from "firebase/firestore";
-import { db } from '../../config'
-
+import { collection, getDocs, addDoc } from "firebase/firestore";
+import { db } from '../../config';
+import Modal from "react-native-modal";
+import moment from 'moment';
+import { TextInput } from 'react-native-paper';
+import RNSmtpMailer from "react-native-smtp-mailer";
 
 const { width, height } = Dimensions.get('window')
 
@@ -15,61 +17,113 @@ export class ParentViewEvent extends React.Component {
   constructor() {
     super();
     this.state = {
-      class: null,
-      teachers: null
+      isModalVisible: false,
+      todayEventName: '',
+      todayEventDate: '',
+      todayEventId: '',
+      currentDate: '',
+      teachersData: null,
+      selectedTeacher: '',
+      data: ["9:00", "9:10", "9:20", "9:30", "9:40", "9:50", "10:00", "10:10", "10:20", "10:30", "10:40", "10:50", "11:00", "11:10", "11:20", "11:30", "11:40", "11:50", "12:00", "12:10", "12:20", "12:30", "12:40", "12:50", "1:40", "1:50", "2:00", "2:10", "2:20", "2:30", "2:40", "2:50", "3:00"],
+      slot: null,
+      selectedSlot: null,
+      bookedTimings: [],
+      currentDate: '',
+      studentName: '',
+      studentClass: ''
     }
   }
 
-  teacher = [
-    {email: "siddhantpallod@peterspanchgani.org", id:"Siddhant_Pallod", name: "Siddhant Pallod", picture: "", subject: "Everything", teaches: ["DP1 ", "DP2"]},
-    { email: "alfiya.s@mitgurukul.com", id: "Alfiya_Shaikh", name: "Alfiya Shaikh", picture: "", subject: "German", teaches: [""] },
-    { email: "arpit.s@mitgurukul.com", id: "Arpit_Sharma", name: "Arpit Sharma", picture: "https://lh3.googleusercontent.com/cm/AOLgnvuynSL4gpNQNbuszFXHgmKoo5kVAOM5VklmjxO49WcmtbcwUNTDYbOT9_GF_HbY=s69-p-k-rw-no", "subject": "English ", "teaches": ["DP1 ", "DP2 "] },
-    { email: "arti.belpathak@mitgurukul.com", id: "Arti_Belpathak", name: "Arti Belpathak", picture: "", subject: "Dance", teaches: [""] },
-    { email: "daisy.m@mitgurukul.com", id: "Daisy_Motafram", name: "Daisy Motafram", picture: "", subject: "French", teaches: [""] },
-    { email: "dhanashree.p@mitgurukul.com", id: "Dhanashree_Patil", name: "Dhanashree Patil", picture: "", subject: "", teaches: [""] },
-    { email: "jaya.shahi@mitgurukul.com", id: "Jaya_Shahi", name: "Jaya Shahi", picture: "", subject: "Hindi", teaches: [""] },
-    { email: "jayanta.k@mitgurukul.com", id: "Jayanta_Kar", name: "Jayanta Kar", picture: "", subject: "", teaches: [""] },
-    { email: "nancy.p@mitgurukul.com", id: "Nancy_Paul", name: "Nancy Paul", picture: "", subject: "Spanish", teaches: [""] },
-    { email: "nanda.kathale@mitgurukul.com", id: "Nanda_Kathale", name: "Nanda Kathale", picture: "", subject: "", teaches: [""] },
-    { email: "neeru.m@mitgurukul.com", id: "Neeru_Mittal", name: "Neeru Mittal", picture: "", subject: "", teaches: [""] },
-    { email: "nruparaj.s@mitgurukul.com", id: "Nruparaj_Sahu", name: "Nruparaj Sahu", picture: "", "subject": "Mathematics", teaches: [""] },
-    { email: "parsuvanath.j@mitgurukul.com", id: "Parsuvanath_Jain", name: "Parsuvanath Jain", picture: "", subject: "Hindi", teaches: [""] },
-    { email: "pramod.s@mitgurukul.com", id: "Pramod_Sahoo", name: "Pramod Sahoo", picture: "", subject: "Film", teaches: [""] },
-    { email: "prasun.h@mitgurukul.com", id: "Prasun_Harja", name: "Prasun Harja", picture: "", subject: "Mathematics", teaches: [""] },
-    { email: "purva.h@mitgurukul.com", id: "Purva_Holkar", name: "Purva Holkar", picture: "", subject: "Design Technology", teaches: [""] },
-    { email: "rameez.r@mitgurukul.com", id: "Rameez_Rehman", name: "Rameez Rehman", picture: "https://lh3.googleusercontent.com/a-/AD_cMMQo7ibf0GW80UZDBdZ3q-mIP11wKKkiXNotZqyfBw=s69-p-k-rw-no", subject: "Business Management", teaches: ["DP1 ", "DP2 "] },
-    { email: "renu.c@mitgurukul.com", id: "Renu_Choudhary", name: "Renu Choudhary", picture: "", subject: "", teaches: [""] },
-    { email: "richa.s@mitgurukul.com", id: "Richa_Singh", name: "Richa Singh", picture: "", subject: "", teaches: [""] },
-    { email: "rohit.p@mitgurukul.com", id: "Rohit_Phalke", name: "Rohit Phalke", picture: "", subject: "Economics", teaches: ["DP1 ", "DP2 "] },
-    { email: "saily.b@mitgurukul.com", id: "Saily_Bawne", name: "Saily Bawne", picture: "", "subject": "Mathematics", teaches: [""] },
-    { email: "shailah.r@mitgurukul.com", id: "Shailah_Rafique", name: "Shailah Rafique", picture: "", subject: "Business Management", teaches: ["DP1 ", "DP2 "] },
-    { email: "shrishty.s@mitgurukul.com", id: "Shrishty_Sehgal", name: "Shrishty Sehgal", picture: "", subject: "English", teaches: [""] },
-    { email: "sneha.bhatt@mitgurukul.com", id: "Sneha_Bhatt", name: "Sneha Bhatt", picture: "", subject: "Psychology ", teaches: ["DP1 ", "DP2 "] },
-    { email: "sonali.j@mitgurukul.com", id: "Sonali_Joshi", name: "Sonali Joshi", picture: "", subject: "German", teaches: ["DP1 ", "DP2 "] },
-    { email: "swathi.c@mitgurukul.com", id: "Swathi_Chiluka", name: "Swathi Chiluka", picture: "", subject: "", teaches: [""] },
-    { email: "tejashri.joshi@mitgurukul.com", id: "Tejashri_Joshi", name: "Tejashri Joshi", picture: "", subject: "French", teaches: [""] },
-    { email: "zoha.s@mitgurukul.com", id: "Zoha_Sayed", name: "Zoha Sayed", picture: "", subject: "", teaches: [""] }]
-
-
+  
   //to get teachers data from firebase
 
-  // async componentDidMount() {
-  //   const querySnapshot = await getDocs(collection(db, "teachers"));
+  async componentDidMount() {
 
-  //   const d = querySnapshot.docs.map((doc) => ({
-  //     id: doc.id,
-  //     ...doc.data()
-  //   }))
-
-  //   this.teacher = d
-  //   this.userNames = this.teacher.map(({name}) => name)
-  //   this.email = this.teacher.map(({email}) => email)
-  //   this.picture = this.teacher.map(({picture}) => picture)
-  //   this.teaches = this.teacher.map(({teaches}) => teaches)
-  //   this.subject = this.teacher.map(({subject}) => subject)
-  // }
+      var d = moment().utcOffset('+05:30').format('MMM DD YYYY')
+      this.setState({
+        currentDate: d
+        })
 
 
+      const querySnapshot = await getDocs(collection(db, "events"))
+        querySnapshot.forEach((doc) => {
+            string = doc.data().eventDate
+            dateFormat = string.toDate() + 1
+            properDate = dateFormat.substring(4, 15)
+
+            if (this.state.currentDate == properDate) {
+                this.setState({ todayEventName: doc.data().eventName, todayEventDate: properDate, todayEventId: doc.id })
+            }
+        })
+
+      const data = []
+
+      const query = await getDocs(collection(db, "teachers"));
+      query.forEach((doc) => {
+        d = doc.data()
+        data.push(d)
+      })
+
+  
+      this.setState({
+        teachersData: data,
+      })
+
+      const quer = await getDocs(collection(db, 'events'))
+      quer.forEach((doc) => {
+        string = doc.data().eventDate
+        dateFormat = string.toDate() + 1
+        properDate = dateFormat.substring(4, 15)
+
+        if (this.state.currentDate == properDate) {
+        this.setState({ todayEventName: doc.data().eventName, todayEventDate: properDate, todayEventId: doc.id })
+      }
+      })
+
+      const dat = []
+
+      const q = await getDocs(collection(db, "events", this.state.todayEventId, this.state.selectedTeacher.email))
+      q.forEach((doc) => {
+      string = doc.data().time
+      dat.push(string)
+
+      const filterData = this.state.data.filter(el => dat.some(it => it == el))
+      this.setState({ bookedTimings: filterData })
+    })
+  }
+
+
+  sendMail = () => {
+    RNSmtpMailer.sendMail({
+      mailhost: "smtp.gmail.com",
+      port: "465",
+      ssl: true,
+      username: "siddhantpallod@gmail.com",
+      password: "",
+      recipients: "TOEMAIL",
+      subject: "Meeting",
+      htmlBody: "<h1>header</h1><p>body</p>",
+  //     attachmentPaths: [
+  //       RNFS.ExternalDirectoryPath + "/image.jpg",
+  //       RNFS.DocumentDirectoryPath + "/test.txt",
+  //       RNFS.DocumentDirectoryPath + "/test2.csv",
+  //       RNFS.DocumentDirectoryPath + "/pdfFile.pdf",
+  //       RNFS.DocumentDirectoryPath + "/zipFile.zip",
+  //       RNFS.DocumentDirectoryPath + "/image.png"
+  // ], // optional
+  //     attachmentNames: [
+  //       "image.jpg",
+  //       "firstFile.txt",
+  //       "secondFile.csv",
+  //       "pdfFile.pdf",
+  //       "zipExample.zip",
+  //       "pngImage.png"
+      // ], // required in android, these are renames of original files. in ios filenames will be same as specified in path. In a ios-only application, no need to define it
+        })
+
+    .then(success => console.log(success))
+    .catch(err => console.log(err))
+  }
 
 
   render() {
@@ -112,51 +166,18 @@ export class ParentViewEvent extends React.Component {
 
         </View>
 
-        {/* <Dropdown
-          mode='default'
-          placeholder='Class'
-          data={[
-            { label: 'DP1', value: '1' },
-            { label: 'DP2', value: '2' },
-          ]}
-          onChange={(item) => {
-            this.setState({ class: item })
-            console.log(this.state.class)
-          }}
-
-          style={{
-            margin: 16,
-            height: 50,
-            borderBottomColor: 'gray',
-            borderBottomWidth: 0.5,
-            width: width / 2,
-            justifyContent: 'center',
-            alignSelf: 'center'
-          }}
-          placeholderStyle={{ fontSize: 16 }}
-          labelField="label"
-          valueField="value"
-        /> */}
 
         <View style={{ flex: 0.5, justifyContent: 'center', alignItems: 'center' }}>
           <ScrollView>
-            {this.teacher?.map((item) => (
+          
+
+            {this.state.teachersData?.map((item) => (
               <View key={item.id}>
                 <TouchableOpacity style={{ backgroundColor: '#99EDE3', width: width / 1.09, height: height / 8, borderRadius: 30, margin: 10, justifyContent: 'center', alignItems: 'center' }}
+
                   onPress={(i) => {
-                    navigation.navigate('Parent_View_Teacher', {
-                      teacher_name: item.name,
-                      teacher_email: item.email,
-                      teacher_picture: item.picture,
-                      teacher_subject: item.subject,
-                      teacher_teaches: item.teaches,
-                      email: email,
-                      firstName: firstName,
-                      picture: picture,
-                      name: name
-                    })
-                  }}
-                >
+                    this.setState({isModalVisible: true, selectedTeacher: item})}}>
+
                   <View style={{ alignSelf: 'center', justifyContent: 'center', flexDirection: 'row' }}>
                     <Avatar rounded source={{ uri: item.picture }} size={'medium'} containerStyle={{ alignSelf: 'center', justifyContent: 'flex-start', margin: 10 }} />
                     <View style={{ flexDirection: 'column' }}>
@@ -166,6 +187,135 @@ export class ParentViewEvent extends React.Component {
                     </View>
                   </View>
                 </TouchableOpacity>
+
+                <View>
+                    <Modal backdropTransitionInTiming={0} backdropTransitionOutTiming={0} onBackdropPress={() => this.setState({isModalVisible: false})} onBackButtonPress={() => this.setState({isModalVisible: false})} deviceWidth={width}  deviceHeight={height} coverScreen = {true} isVisible = {this.state.isModalVisible} animationIn={'slideInUp'} animationInTiming={400} animationOut={'slideOutDown'} animationOutTiming={400}>
+                    <View style = {{backgroundColor: '#99EDE3', flex : 0.8, justifyContent: 'center', alignItems: 'center'}}>
+                      <TouchableOpacity style = {{ right: 0 ,alignItems: 'flex-end', justifyContent: 'flex-start'}} onPress={() => this.setState({isModalVisible: false})}>
+                        <Text>Close</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity style = {{ right: 0, alignItems: 'flex-end', justifyContent: 'flex-start'}} onPress={() => this.sendMail()}>
+                        <Text>Mail Me</Text>
+                      </TouchableOpacity>
+                      
+                      <Avatar rounded source={{ uri: this.state.selectedTeacher.picture }} size={'large'} containerStyle={{ alignSelf: 'center', justifyContent: 'flex-start', margin: 10 }} />
+                      <Text style = {{fontSize: 30, marginTop: 10}}>{this.state.selectedTeacher.name}</Text>
+                      <Text style={{ fontWeight: 'bold', fontSize: 15 }}>Subject: {this.state.selectedTeacher.subject}</Text>
+                      <Text style={{ fontWeight: 'bold', fontSize: 15 }}>Teaches: {this.state.selectedTeacher.teaches}</Text>
+
+                      <TextInput
+                        placeholder='Name of the Student'
+
+                        outlineColor='#99EDE3'
+                        // activeOutlineColor='#99EDE3'
+                        style={{
+                          height: height / 18,
+                          width: width/1.5,
+                          justifyContent: 'center',
+                          marginTop: height / 40
+                        }}
+                        mode='outlined'
+
+                        outlineStyle={{
+                          borderRadius: 50,
+                          borderWidth: 2
+                        }}
+
+                        onChangeText={(text) => this.setState({ studentName: text })}
+                      />
+
+                      <TextInput
+                        placeholder='Class of the Student'
+
+                        outlineColor='#99EDE3'
+                        // activeOutlineColor='#99EDE3'
+                        style={{
+                          height: height / 18,
+                          width: width/1.5,
+                          justifyContent: 'center',
+                          marginTop: 10
+                        }}
+                        mode='outlined'
+
+                        outlineStyle={{
+                          borderRadius: 50,
+                          borderWidth: 2
+                        }}
+
+                        onChangeText={(text) => this.setState({ studentClass: text })}
+                      />
+
+
+                      <FlatList
+                        style = {{
+                          marginTop: 15
+                        }}
+                        data={this.state.data}
+                        horizontal = {false}
+                        numColumns={4}
+                        renderItem={({item, index}) => {
+                          return(
+                            <TouchableOpacity
+                              style={{
+                                margin: 10,
+                                backgroundColor: 'white',
+                                borderRadius: 10,
+                                width: width/6,
+                                height: height/20,
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                borderWidth: this.state.selectedSlot == index ? 3: 1
+                              }}
+                              key={index}
+                              onPress={() => {
+                                this.setState({
+                                  selectedSlot: index,
+                                  slot: this.state.data[index]
+                                })
+                              }}
+                            >
+                            <Text style={{ fontSize: this.state.selectedSlot == index ? 20 : 15, fontWeight: 'bold', alignSelf: 'center' }} >{this.state.data[index]}</Text>
+                            </TouchableOpacity>
+                          )
+                        }}
+                      />
+
+                      <TouchableOpacity 
+                        style={{
+                        width: width/2,
+                        backgroundColor: 'white',
+                        height: height / 20,
+                        borderRadius: 50,
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        marginTop: 20
+                       }}
+                      
+                        onPress={async () => {
+                          const docRef = collection(db, 'events', this.state.todayEventId, this.state.selectedTeacher.email)
+                          await addDoc(docRef, {
+                            teacherName: this.state.selectedTeacher.name,
+                            parentName: name,
+                            parentEmail: email,
+                            time: this.state.slot,
+                            teacherEmail: this.state.selectedTeacher.email,
+                            studentName: this.state.studentName,
+                            studentClass: this.state.studentClass
+              })
+                          .then(() => {
+                           
+                           this.setState({
+                            isModalVisible: false
+                           })
+                })
+                        }}
+                       >
+                      
+                        <Text style={{ fontWeight: 'bold', fontSize: 20 }}>BOOK</Text>
+                      </TouchableOpacity>
+                    </View>
+                    </Modal>
+                  </View>
 
               </View>
             ))}

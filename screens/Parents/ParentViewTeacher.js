@@ -136,24 +136,7 @@ export class ParentViewTeacher extends React.Component {
                   //   borderColor: 'black'
                   // }}
 
-                  style={[
-                    { backgroundColor: index == this.bookedSlots()[13] ? '#C60202' : '#2C9F3E' },
-                    { backgroundColor: index == this.bookedSlots()[12] ? '#C60202' : '#2C9F3E' },
-                    { backgroundColor: index == this.bookedSlots()[11] ? '#C60202' : '#2C9F3E' },
-                    { backgroundColor: index == this.bookedSlots()[10] ? '#C60202' : '#2C9F3E' },
-                    { backgroundColor: index == this.bookedSlots()[9] ? '#C60202' : '#2C9F3E' },
-                    { backgroundColor: index == this.bookedSlots()[8] ? '#C60202' : '#2C9F3E' },
-                    { backgroundColor: index == this.bookedSlots()[7] ? '#C60202' : '#2C9F3E' },
-                    { backgroundColor: index == this.bookedSlots()[6] ? '#C60202' : '#2C9F3E' },
-                    { backgroundColor: index == this.bookedSlots()[5] ? '#C60202' : '#2C9F3E' },
-                    { backgroundColor: index == this.bookedSlots()[4] ? '#C60202' : '#2C9F3E' },
-                    { backgroundColor: index == this.bookedSlots()[3] ? '#C60202' : '#2C9F3E' },
-                    { backgroundColor: index == this.bookedSlots()[2] ? '#C60202' : '#2C9F3E' },
-                    { backgroundColor: index == this.bookedSlots()[1] ? '#C60202' : '#2C9F3E' },
-                    { backgroundColor: index == this.bookedSlots()[0] ? '#C60202' : '#2C9F3E' },
-
-
-                    {
+                  style={{
                       borderWidth: this.state.selectedSlot == index ? 3.5 : 0.5,
                       borderRadius: 10,
                       justifyContent: 'center',
@@ -161,11 +144,13 @@ export class ParentViewTeacher extends React.Component {
                       height: height / 16,
                       alignItems: 'center',
                       margin: 5,
-                      borderColor: 'black'
-                    }
-                  ]}
-
-                  disabled={index == this.bookedSlots()}>
+                      borderColor: 'black',
+                      backgroundColor : this.state.data[index] == this.state.bookedTimings ? '#C60202' : '#2C9F3E'
+                    }}
+                  
+                  disabled={index == this.bookedSlots()} 
+                  
+                  >
 
                   <Text style={{ fontSize: this.state.selectedSlot == index ? 20 : 15, fontWeight: 'bold' }} >{this.state.data[index]}</Text>
                 </TouchableOpacity>

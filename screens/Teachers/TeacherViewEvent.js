@@ -17,7 +17,7 @@ export class TeacherViewEvent extends React.Component {
     constructor() {
         super();
         this.state = {
-            data: ["9:00", "9:10", "9:20", "9:30", "9:40", "9:50", "10:00", "10:10", "10:20", "10:30", "10:40", "10:50", "11:00", "11:10", "11:20", "11:30", "11:40", "11:50", "12:00", "12:10", "12:20", "12:30", "12:40", "12:50", "1:00", "1:10", "1:20", "1:30", "1:40", "1:50", "2:00", "2:10", "2:20", "2:30", "2:40", "2:50", "3:00"],
+            data: ["9:00", "9:10", "9:20", "9:30", "9:40", "9:50", "10:00", "10:10", "10:20", "10:30", "10:40", "10:50", "11:00", "11:10", "11:20", "11:30", "11:40", "11:50", "12:00", "12:10", "12:20", "12:30", "12:40", "12:50", "1:40", "1:50", "2:00", "2:10", "2:20", "2:30", "2:40", "2:50", "3:00"],
             todayEventName: '',
             todayEventDate: '',
             todayEventId: '',
@@ -66,6 +66,21 @@ export class TeacherViewEvent extends React.Component {
 
         const filterData = this.state.data.filter(el => dat.some(it => it == el))
         this.setState({ bookedTimings: filterData })
+    }
+
+    changeColor = () => {
+        for(i = 0; i < this.state.data.length; i++){
+            // for(j = 0; j < this.state.bookedTimings.length; j++){
+                if(this.state.bookedTimings == this.state.data[i]){
+                   //alert(this.state.bookedTimings[j])
+                   //alert(this.state.data[i])
+                    return 'red'
+                }
+                else{
+                    return 'green'
+                }
+            // }
+        }
     }
 
     render() {
@@ -121,8 +136,15 @@ export class TeacherViewEvent extends React.Component {
                                         height: height / 16,
                                         alignItems: 'center',
                                         margin: 5,
-                                        backgroundColor: this.state.data[index] == this.state.bookedTimings ? '#C60202' : '#2C9F3E'
-                                    }} disabled >
+                                        // backgroundColor: this.changeColor(),
+                                        backgroundColor: this.state.data[index] == this.state.bookedTimings ? 'red' : 'green'
+                                    }} 
+                                        onPress={() => {
+                                            alert(this.state.data[index])
+                                            alert(this.state.bookedTimings)
+                                        }
+                                    }
+                                    >
                                     <Text style={{ fontWeight: 'bold' }} >{this.state.data[index]}</Text>
                                 </TouchableOpacity>
                             )
@@ -158,7 +180,9 @@ export class TeacherViewEvent extends React.Component {
                                     <Text style={{ fontSize: 20, fontWeight: 'bold' }}>Email: {this.state.parentData[index].parentEmail}</Text>
                                     <Icon name='copy' type='ionicon'  containerStyle = {{ marginRight: 10, alignSelf: 'flex-end'}} onPress={ async() => await Clipboard.setStringAsync(this.state.parentData[index].parentEmail)} />
                                     <Text style={{ fontSize: 20, fontWeight: 'bold' }}>Student Name: {this.state.parentData[index].studentName}</Text>
+                                    <Text style={{ fontSize: 20, fontWeight: 'bold' }}>Student Class: {this.state.parentData[index].studentClass}</Text>
                                     <Text style={{ fontSize: 20, fontWeight: 'bold' }}>Time: {this.state.parentData[index].time}</Text>
+
                                 </View>
                             )
                         }}
