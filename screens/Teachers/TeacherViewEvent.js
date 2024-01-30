@@ -1,3 +1,4 @@
+// Importing libraries
 import { Text, View, Dimensions, TouchableOpacity, SafeAreaView, FlatList, ScrollView } from 'react-native';
 import React from 'react';
 import { Header, Icon } from 'react-native-elements'
@@ -9,13 +10,14 @@ import { collection, doc, getDoc, getDocs } from "firebase/firestore";
 import * as Clipboard from 'expo-clipboard';
 
 
-
+// fetches width and height of the screen
 const { width, height } = Dimensions.get('window')
 
 export class TeacherViewEvent extends React.Component {
 
     constructor() {
         super();
+        // sets default states
         this.state = {
             data: ["9:00", "9:10", "9:20", "9:30", "9:40", "9:50", "10:00", "10:10", "10:20", "10:30", "10:40", "10:50", "11:00", "11:10", "11:20", "11:30", "11:40", "11:50", "12:00", "12:10", "12:20", "12:30", "12:40", "12:50", "1:40", "1:50", "2:00", "2:10", "2:20", "2:30", "2:40", "2:50", "3:00"],
             todayEventName: '',
@@ -27,13 +29,17 @@ export class TeacherViewEvent extends React.Component {
         }
     }
 
+    // calls itself once the component is mounted
     async componentDidMount() {
+        // fetches current date
         var d = moment().utcOffset('+05:30').format('MMM DD YYYY')
 
+        // sets state
         this.setState({
             currentDate: d
         })
 
+        // fetches data from firebase
         const querySnapshot = await getDocs(collection(db, "events"))
         querySnapshot.forEach((doc) => {
             string = doc.data().eventDate
@@ -68,33 +74,21 @@ export class TeacherViewEvent extends React.Component {
         this.setState({ bookedTimings: filterData })
     }
 
-    changeColor = () => {
-        for(i = 0; i < this.state.data.length; i++){
-            // for(j = 0; j < this.state.bookedTimings.length; j++){
-                if(this.state.bookedTimings == this.state.data[i]){
-                   //alert(this.state.bookedTimings[j])
-                   //alert(this.state.data[i])
-                    return 'red'
-                }
-                else{
-                    return 'green'
-                }
-            // }
-        }
-    }
-
+    // renders components on screen
     render() {
-
+        // props from other screens
         const { navigation, route } = this.props
         const { email, name, picture, firstName } = route.params
 
 
         return (
             <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
+            {/* Status bar component */}
                 <StatusBar style='auto' backgroundColor='#99EDE3' />
 
 
                 <View style={{ flex: 0.3 }}>
+                {/* Header component */}
                     <Header
                         centerComponent={{
                             text: "View Event",
@@ -106,7 +100,7 @@ export class TeacherViewEvent extends React.Component {
                 </View>
 
                 <View style={{ alignItems: 'center', flex: 0.6 }}>
-
+                    {/* Image component */}
                     <Image
                         source={require('../../assets/createEvent.png')}
                         contentFit="cover"
@@ -121,55 +115,9 @@ export class TeacherViewEvent extends React.Component {
                     />
                 </View>
 
-                <View style={{ flex: 0.15 }}>
-                    <FlatList
-                        data={this.state.data}
-
-                        renderItem={({ item, index }) => {
-                            return (
-                                <TouchableOpacity
-                                    style={{
-                                        borderWidth: 2.5,
-                                        borderRadius: 10,
-                                        justifyContent: 'center',
-                                        width: width / 6,
-                                        height: height / 16,
-                                        alignItems: 'center',
-                                        margin: 5,
-                                        // backgroundColor: this.changeColor(),
-                                        backgroundColor: this.state.data[index] == this.state.bookedTimings ? 'red' : 'green'
-                                    }} 
-                                        onPress={() => {
-                                            alert(this.state.data[index])
-                                            alert(this.state.bookedTimings)
-                                        }
-                                    }
-                                    >
-                                    <Text style={{ fontWeight: 'bold' }} >{this.state.data[index]}</Text>
-                                </TouchableOpacity>
-                            )
-                        }}
-
-                        keyExtractor={item => `key-${item.id}`}
-                        horizontal
-                        showsHorizontalScrollIndicator={false}
-                    />
-                </View>
-
-                <View style={{ flex: 0.1, justifyContent: 'space-evenly', flexDirection: 'row' }}>
-                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                        <View style={{ backgroundColor: 'green', width: width / 8, height: height / 30 }}></View>
-                        <Text style={{ fontWeight: 'bold' }}>  Available</Text>
-                    </View>
-
-                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                        <View style={{ backgroundColor: 'red', width: width / 8, height: height / 30 }}></View>
-                        <Text style={{ fontWeight: 'bold' }}>  Booked</Text>
-                    </View>
-
-                </View>
 
                 <View style={{ flex: 0.6 }} >
+                {/* Flatlist component */}
                     <FlatList
                         data={this.state.parentData}
 
@@ -195,4 +143,5 @@ export class TeacherViewEvent extends React.Component {
     }
 }
 
+// exports current class
 export default TeacherViewEvent

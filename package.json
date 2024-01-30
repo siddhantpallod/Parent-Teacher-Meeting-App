@@ -9,6 +9,7 @@
     "web": "expo start --web"
   },
   "dependencies": {
+    "@emailjs/browser": "^3.12.1",
     "@expo/html-elements": "^0.5.1",
     "@react-native-community/google-signin": "^5.0.0",
     "@react-native-firebase/app": "^17.5.0",
@@ -16,7 +17,7 @@
     "@react-native-google-signin/google-signin": "^10.0.1",
     "@react-navigation/native": "^6.1.6",
     "@react-navigation/native-stack": "^6.9.12",
-    "expo": "^48.0.17",
+    "expo": "48.0.17",
     "expo-application": "~5.1.1",
     "expo-auth-session": "~4.0.3",
     "expo-clipboard": "~4.1.2",
@@ -37,7 +38,7 @@
     "nodemailer": "^6.9.5",
     "npx": "^10.2.2",
     "react": "18.2.0",
-    "react-native": "0.71.8",
+    "react-native": "0.71.14",
     "react-native-element-dropdown": "^2.9.0",
     "react-native-elements": "^3.4.3",
     "react-native-fs": "^2.20.0",
@@ -53,8 +54,7 @@
     "react-native-screens": "~3.20.0",
     "react-native-smtp-mailer": "^1.2.5",
     "react-native-web": "~0.18.10",
-    "rn-nodeify": "^10.3.0",
-    "undefined": "@react-native-google-signin\\google-signin"
+    "rn-nodeify": "^10.3.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"

@@ -1,3 +1,4 @@
+// Importing libraries
 import { Text, View, SafeAreaView, Dimensions, TouchableOpacity } from 'react-native'
 import React from 'react'
 import { StatusBar } from 'expo-status-bar';
@@ -9,19 +10,17 @@ import { Header } from 'react-native-elements'
 import { collection, addDoc, getDocs } from "firebase/firestore";
 import { db } from '../../config';
 
-
+// Fetching width and height of device
 const { width, height } = Dimensions.get('window')
 
 
 
-
+// Creating and exporting class
 export class AdminCreateEvent extends React.Component {
-
-
-
 
     constructor() {
         super();
+        // Sets default states
         this.state = {
             eventName: "",
             eventDate: ""
@@ -30,22 +29,21 @@ export class AdminCreateEvent extends React.Component {
 
 
 
-
+    // renders components on screen
     render() {
 
+        // props from other screens
         const { navigation, route } = this.props
         const { email, name, picture, firstName } = route.params
 
 
-        createEvent = async () => {
-
-
-        }
 
         return (
             <SafeAreaProvider style={{ flex: 1, backgroundColor: 'white' }}>
+                {/* Status Bar component */}
                 <StatusBar style='auto' backgroundColor='#99EDE3' />
 
+                {/* Header component */}
                 <View style={{ flex: 0.3 }}>
                     <Header
                         centerComponent={{
@@ -58,7 +56,7 @@ export class AdminCreateEvent extends React.Component {
                 </View>
 
 
-                {/* <View style = {{flex: 1}}> */}
+                {/* Image component */}
                 <View style={{ alignItems: 'center', flex: 0.5 }}>
 
                     <Image
@@ -74,7 +72,7 @@ export class AdminCreateEvent extends React.Component {
 
                     />
 
-
+                    {/* Text input component */}
                     <TextInput
                         placeholder='Name of the Event'
                         outlineColor='#99EDE3'
@@ -95,10 +93,9 @@ export class AdminCreateEvent extends React.Component {
                         onChangeText={(text) => this.setState({ eventName: text })}
                     />
 
-
+                    {/* Date Picker Component */}
                     <View
-                        style={{ marginBottom: height / 3 }}
-                    >
+                        style={{ marginBottom: height / 3 }}>
                         <DatePickerInput
                             locale="en"
                             label="Date of the Event"
@@ -117,11 +114,12 @@ export class AdminCreateEvent extends React.Component {
                             }}
                             outlineColor='#99EDE3'
                             activeOutlineColor='#99EDE3'
-                            startYear={2023}
+                            startYear={2024}
 
                         />
                     </View>
 
+                    {/* Button Component */}
                     <TouchableOpacity onPress={async () => {
                         const docRef = await addDoc(collection(db, "events"), {
                             eventName: this.state.eventName,
@@ -146,10 +144,10 @@ export class AdminCreateEvent extends React.Component {
                         <Text style={{ fontWeight: 'bold', fontSize: 18 }}>Create Event</Text>
                     </TouchableOpacity>
                 </View>
-                {/* </View> */}
             </SafeAreaProvider>
         )
     }
 }
 
+// exports the class
 export default AdminCreateEvent

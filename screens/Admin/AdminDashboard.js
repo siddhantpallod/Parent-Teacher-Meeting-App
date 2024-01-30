@@ -1,3 +1,4 @@
+// Importing libraries
 import { Text, View, TouchableOpacity, SafeAreaView, Dimensions, ScrollView } from 'react-native';
 import React from 'react';
 import { StatusBar } from 'expo-status-bar';
@@ -6,6 +7,7 @@ import moment from 'moment';
 import { collection, doc, getDoc, getDocs } from "firebase/firestore";
 import { db } from '../../config'
 
+// fetching width and height of the device
 const { width, height } = Dimensions.get('window')
 
 
@@ -13,27 +15,31 @@ export class AdminDashboard extends React.Component {
 
   constructor(){
     super()
+    // setting default states
     this.state = {
       currentDate: '',
-      todayEvent: false,
-      pastEvents: false,
-      todayEventName: '',
+      todayEvent: false, 
+      pastEvents: false, 
+      todayEventName: '', 
       todayEventDate: '',
       todayEventId: '',
       pastEventName: '',
       pastEventDate: '',
       pastEventId: ''
-    }
+    } 
   }
 
+  // calls itself after the component is mounted
   async componentDidMount(){
+    // fetches the current date
     var d = moment().utcOffset('+05:30').format('MMM DD YYYY')
     
-
+    // setting state
     this.setState({
       currentDate: d
     })
 
+    // fetching data from firebase
     const querySnapshot = await getDocs(collection(db, "events"))
     querySnapshot.forEach((doc) => {
       string = doc.data().eventDate
@@ -48,20 +54,25 @@ export class AdminDashboard extends React.Component {
         this.setState({ pastEvents: true, pastEventName: doc.data().eventName, pastEventDate: properDate, pastEventId: doc.id })
       }
 
+
     })
   }
-
+ 
+  // renders components on screen
   render() {
 
+    // props from other screens
     const { navigation, route } = this.props
     const { email, name, picture, firstName } = route.params
 
     return (
       <SafeAreaView>
+        {/* Status bar component */}
         <StatusBar style='auto' backgroundColor='#99EDE3' />
         <View style={{ justifyContent: 'center', alignItems: 'center'}}>
           <View style={{ flex: 0.2, justifyContent: 'center', alignItems: 'center' }}>
             <View style={{ backgroundColor: '#99EDE3', width: width, justifyContent: "center", height: height / 3, alignItems: 'center', marginTop: height / 3 }}>
+              {/* Avatar component */}
               <Avatar
                 rounded
                 source={{ uri: picture }}
@@ -69,15 +80,18 @@ export class AdminDashboard extends React.Component {
                 containerStyle={{ borderRadius: 10 }}
 
               />
+              {/* Text component */}
               <Text style={{ alignSelf: 'center', fontWeight: 'bold', fontSize: 20 }}>Welcome {firstName}!</Text>
             </View>
           </View>
-
-            <TouchableOpacity onPress={() => navigation.navigate('Admin_Create_Event', {
-              email: email,
-              name: name,
-              picture: picture,
-              firstName: firstName
+            {/* Button component */}
+            <TouchableOpacity 
+              // Navigates to other screen
+              onPress={() => navigation.navigate('Admin_Create_Event', {
+                email: email,
+                name: name,
+                picture: picture,
+                firstName: firstName
             })}
 
               style={{
@@ -93,6 +107,7 @@ export class AdminDashboard extends React.Component {
             </TouchableOpacity>
 
             <Text style={{ fontWeight: "bold", fontSize: 20, alignSelf: 'center', marginTop: 30 }}>Ongoing Events</Text>
+            {/* checks if there is an event today */}
             {this.state.todayEvent ?
             <View style={{ flex: 0.2, justifyContent: 'center', alignItems: 'center' }}>
               <TouchableOpacity style={{
@@ -104,19 +119,27 @@ export class AdminDashboard extends React.Component {
                 justifyContent: 'center',
                 marginTop: height / 10
               }}
+
+              onPress={() => navigation.navigate('Admin_View_Event', {
+                todayEventId: this.state.todayEventId,
+                todayEventName: this.state.todayEventName,
+                todayEventDate: this.state.todayEventDate,
+                email, name, picture, firstName
+              })} 
    
               >
                 <Text style={{ fontWeight: 'bold', fontSize: 18 }}>Name: {this.state.todayEventName}</Text>
                 <Text style={{ fontWeight: 'bold', fontSize: 18 }}> Date : {this.state.todayEventDate} </Text>
               </TouchableOpacity>
-            </View>
-            :
+            </View> 
+            : 
             <Text style={{ fontSize: 15, alignSelf: 'center', marginTop: height / 15 }}> No Ongoing Events </Text>
           }
 
           <Text style={{ fontWeight: "bold", fontSize: 20, alignSelf: 'center', marginTop: height / 6 }}>Past Events</Text>
 
-          {this.state.pastEvents ? <View style={{ flex: 0.2, justifyContent: 'center', alignItems: 'center' }}>
+          {this.state.pastEvents ? 
+          <View style={{ flex: 0.2, justifyContent: 'center', alignItems: 'center' }}>
             <TouchableOpacity style={{
               width: width / 1.2,
               backgroundColor: '#99EDE3',
@@ -124,7 +147,7 @@ export class AdminDashboard extends React.Component {
               borderRadius: 50,
               alignItems: 'center',
               justifyContent: 'center',
-              marginTop: height / 10
+              marginTop: height / 10 
             }}>
               <Text style={{ fontWeight: 'bold', fontSize: 18 }}>Name: {this.state.pastEventName}</Text>
               <Text style={{ fontWeight: 'bold', fontSize: 18 }}> Date : {this.state.pastEventDate} </Text>
@@ -144,4 +167,5 @@ export class AdminDashboard extends React.Component {
   }
 }
 
+// exports the class
 export default AdminDashboard
