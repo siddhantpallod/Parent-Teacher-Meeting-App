@@ -1,9 +1,9 @@
 // importing libraries
-import { Text, View, Dimensions, TouchableOpacity, SafeAreaView, FlatList, ScrollView } from 'react-native';
+import { Text, View, Dimensions, TouchableOpacity, SafeAreaView, FlatList, ScrollView, Alert } from 'react-native';
 import React from 'react';
 import { Header, Avatar } from 'react-native-elements'
 import { StatusBar } from 'expo-status-bar';
-import { addDoc, collection, doc, getDocs, setDoc, onSnapshot, query } from "firebase/firestore";
+import { addDoc, collection, doc, getDocs, onSnapshot} from "firebase/firestore";
 import { db } from '../../config'
 import { TextInput } from 'react-native-paper';
 import moment from 'moment';
@@ -22,13 +22,11 @@ export class ParentViewTeacher extends React.Component {
     this.state = {
       timings: ["9:00", "9:10", "9:20", "9:30", "9:40", "9:50", "10:00", "10:10", "10:20", "10:30", "10:40", "10:50", "11:00", "11:10", "11:20", "11:30", "11:40", "11:50", "12:00", "12:10", "12:20", "12:30", "12:40", "12:50", "1:00", "1:10", "1:20", "1:30", "1:40", "1:50", "2:00", "2:10", "2:20", "2:30", "2:40", "2:50", "3:00"],
       selectedSlot: null,
-      studentName: '',
       todayEventName: '',
       todayEventDate: '',
       todayEventId: '',
       currentDate: '',
       slot: null,
-      bookedTimings: [],
       studentClass: '',
       studentName: '',
       availableTimings: null,
@@ -69,12 +67,10 @@ export class ParentViewTeacher extends React.Component {
     res = await dat.filter(item => !dan.includes(item))
 
     await this.setState({availableTimings: res})
-    console.log("hey:", res)
    
 
     await onSnapshot(doc(db, 'teachers', this.props.route.params.teacher_email), (doc) => {
       this.setState({meetingLink: doc.data().meetingLink})
-      console.log(doc.data().meetingLink)
     })
 
   }
@@ -223,6 +219,7 @@ export class ParentViewTeacher extends React.Component {
                             });
                             // adds data to firebase
                           const docRef = collection(db, 'events', this.state.todayEventId, teacher_email)
+                          if(this.state.studentName || this.state.studentClass !== ''){
                           await addDoc(docRef, {
                             teacherName: teacher_name,
                             parentName: name,
@@ -246,7 +243,12 @@ export class ParentViewTeacher extends React.Component {
                               firstName: firstName,
                               name: name,
                            })
+                        
                 })
+                          }
+                          else{
+                            Alert.alert("Please enter appropriate student name and class")
+                          }
                         }}
                        >
                         

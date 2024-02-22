@@ -1,15 +1,15 @@
 // Importing libraries
-import { Text, View, TouchableOpacity, SafeAreaView, Dimensions, ScrollView, FlatList } from 'react-native';
+import { Text, View, TouchableOpacity, SafeAreaView, Dimensions, Alert } from 'react-native';
 import React from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { Header } from 'react-native-elements'
-import { collection, doc, getDoc, getDocs, query, deleteDoc, onSnapshot, setDoc } from "firebase/firestore";
+import { collection, doc, getDocs, deleteDoc, setDoc } from "firebase/firestore";
 import { db } from '../../config'
 import {Overlay, Button} from 'react-native-elements';
 import { TextInput } from 'react-native-paper';
-import { DatePickerInput } from 'react-native-paper-dates';
+import { DatePickerInput, registerTranslation } from 'react-native-paper-dates';
 import * as Linking from 'expo-linking';
-
+import moment from 'moment';
 
 
 // fetching width and height of the device
@@ -28,9 +28,25 @@ export class AdminViewEvent extends React.Component {
     searchTeacher: '',
     searchTeacherData: null,
     searchTeacherLink: '',
-    buttonsVisible: true
+    buttonsVisible: true,
+    currentDate: '',
+    tempDate: ''
     }
   }
+
+  componentDidMount(){
+    var d = moment().utcOffset('+05:30').format('YYYY-MM-DD')
+        this.setState({
+            currentDate: d,
+            })
+
+            
+            date = d.substring(8, 11)
+            dat = Number(date)
+            console.log("Moment", dat)
+            this.setState({currentDate: dat})
+  }
+
 
   async searchTeacher(){
     const data = []
@@ -119,7 +135,7 @@ export class AdminViewEvent extends React.Component {
 
             {this.state.buttonsVisible ?
             <View style={{justifyContent:'center', flexDirection: 'row', justifyContent: 'center'}}>
-              <TouchableOpacity  style = {{backgroundColor: '#C1BE42', margin: 10, borderRadius: 50, width: width/4, height: height/20}}>
+              <TouchableOpacity  style = {{backgroundColor: '#a9a9a9', margin: 10, borderRadius: 50, width: width/4, height: height/20}}>
                <Text style = {{alignSelf: 'center', fontSize: 20, fontWeight: 'bold'}} 
                onPress={() => 
                   this.setState({editModal: true})
@@ -127,14 +143,14 @@ export class AdminViewEvent extends React.Component {
                >EDIT</Text>
               </TouchableOpacity>
 
-              <TouchableOpacity style = {{backgroundColor: '#CE5E5E', margin: 10,borderRadius: 50, width: width/4, height: height/20}}
+              <TouchableOpacity style = {{backgroundColor: '#a9a9a9', margin: 10,borderRadius: 50, width: width/4, height: height/20}}
                 onPress={() => 
                   this.setState({deleteModal: true})
                 }
               >
                <Text style = {{alignSelf: 'center', fontSize: 20, fontWeight: 'bold'}}>DELETE</Text>
               </TouchableOpacity>
-            </View>
+            </View> 
             : 
             <View></View>
         }
@@ -157,7 +173,7 @@ export class AdminViewEvent extends React.Component {
               <View style = {{justifyContent: 'center', }}>
                 <Text style = {{alignSelf: 'center', fontSize: 30, fontWeight: 'bold'}}>EDIT EVENT</Text>
                 <TextInput
-                  placeholder='Name of the event'
+                  placeholder={todayEventName}
                   style = {{
                     height: height/18,
                     width: width/1.5,
@@ -171,12 +187,23 @@ export class AdminViewEvent extends React.Component {
                 <View>
                   <DatePickerInput
                     style = {{margin: 20}}
-                    locale='en'
                     label= 'Date of the event'
                     value = {this.state.editedDate}
-                    onChange={(d) => this.setState({ editedDate: d })}
+                    placeholder={todayEventDate}
+                    onChange={(d) => {
+                      this.setState({ editedDate: d })
+                      dat = d.toString()
+                      date = dat.substring(8, 10)
+                      properDate = Number(date)
+                      this.setState({
+                          eventDate: d,
+                          tempDate: properDate
+                      })
+                      }}
                     inputMode="start"
                     startYear={2024}
+                    mode='single'
+                    locale='en'
                   />
                 </View>
 
@@ -191,12 +218,22 @@ export class AdminViewEvent extends React.Component {
                       }}
 
                   onPress={async () => {
+                    if(this.state.editedName !== ''){
+                      if(this.state.tempDate >= this.state.currentDate){
                     const docRef = await setDoc(doc(db, "events", todayEventId), {
                       eventName: this.state.editedName,
                       eventDate: this.state.editedDate
                     }).then(() => {
                       this.setState({editModal: false})
                     })
+                    }
+                    else{
+                      Alert.alert('Please enter an appropriate date')
+                    }
+                    }
+                  else{
+                    Alert.alert('Please enter Event Name')
+                  }
                   }}
                 >
                 <Text style={{ fontWeight: 'bold', fontSize: 18 }}>Edit Event</Text>

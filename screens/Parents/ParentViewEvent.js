@@ -17,19 +17,11 @@ export class ParentViewEvent extends React.Component {
    super();
     // sets default states
     this.state = {
-      isModalVisible: false,
       todayEventName: '',
       todayEventDate: '',
       todayEventId: '',
       currentDate: '',
       teachersData: null,
-      selectedTeacher: '',
-      slot: null,
-      selectedSlot: null,
-      availableTimings: null,
-      currentDate: '',
-      studentName: '',
-      studentClass: '',
     }
   }
 
@@ -125,7 +117,7 @@ export class ParentViewEvent extends React.Component {
 
                   onPress={() => navigation.navigate('Parent_View_Teacher', {
                     email: email,
-                    picture: picture,
+                    picture: picture, 
                     firstName: firstName,
                     name: name,
                     teacher_name: item.name,

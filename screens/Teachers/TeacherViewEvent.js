@@ -6,7 +6,7 @@ import { StatusBar } from 'expo-status-bar';
 import { Image } from 'expo-image';
 import moment from 'moment';
 import { db } from '../../config'
-import { collection, doc, getDoc, getDocs } from "firebase/firestore";
+import { collection, getDocs } from "firebase/firestore";
 import * as Clipboard from 'expo-clipboard';
 
 
@@ -19,7 +19,6 @@ export class TeacherViewEvent extends React.Component {
         super();
         // sets default states
         this.state = {
-            data: ["9:00", "9:10", "9:20", "9:30", "9:40", "9:50", "10:00", "10:10", "10:20", "10:30", "10:40", "10:50", "11:00", "11:10", "11:20", "11:30", "11:40", "11:50", "12:00", "12:10", "12:20", "12:30", "12:40", "12:50", "1:40", "1:50", "2:00", "2:10", "2:20", "2:30", "2:40", "2:50", "3:00"],
             todayEventName: '',
             todayEventDate: '',
             todayEventId: '',

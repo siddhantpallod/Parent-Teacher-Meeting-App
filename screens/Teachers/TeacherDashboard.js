@@ -27,7 +27,7 @@ export class TeacherDashboard extends React.Component {
       pastEventDate: '',
       isModalVisible: false,
       newMeetingLink: '',
-      alreadyMeetingLink: ''
+      existingMeetingLink: ''
     }
   }
 
@@ -64,7 +64,7 @@ export class TeacherDashboard extends React.Component {
       console.log(this.state.todayEvent)
 
     onSnapshot(doc(db, 'teachers', this.props.route.params.email), (doc) => {
-      this.setState({alreadyMeetingLink: doc.data().meetingLink})
+      this.setState({existingMeetingLink: doc.data().meetingLink})
     })
 
   }
@@ -93,7 +93,7 @@ export class TeacherDashboard extends React.Component {
               />
               
               <Text style={{ alignSelf: 'center', fontWeight: 'bold', fontSize: 20 }}>Welcome {firstName}!</Text>
-              <Text style={{ alignSelf: 'center', fontWeight: 'bold', fontSize: 20 }}>Meeting Link: {this.state.alreadyMeetingLink}</Text>
+              <Text style={{ alignSelf: 'center', fontWeight: 'bold', fontSize: 20 }}>Meeting Link: {this.state.existingMeetingLink}</Text>
               <TouchableOpacity style = {{right: 0, backgroundColor: 'white', borderRadius: 50, width: 130, marginTop: 20}}
                 onPress={() => {
                   this.setState({ isModalVisible: true });

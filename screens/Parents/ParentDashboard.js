@@ -3,7 +3,7 @@ import { Text, View, TouchableOpacity, SafeAreaView, Dimensions } from 'react-na
 import React from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { Avatar } from 'react-native-elements';
-import { collection, doc, getDoc, getDocs } from "firebase/firestore";
+import { collection, getDocs } from "firebase/firestore";
 import { db } from '../../config'
 import moment from 'moment';
 

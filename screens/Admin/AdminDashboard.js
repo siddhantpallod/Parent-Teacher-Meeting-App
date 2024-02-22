@@ -1,10 +1,10 @@
 // Importing libraries
-import { Text, View, TouchableOpacity, SafeAreaView, Dimensions, ScrollView } from 'react-native';
+import { Text, View, TouchableOpacity, SafeAreaView, Dimensions } from 'react-native';
 import React from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { Avatar } from 'react-native-elements';
 import moment from 'moment';
-import { collection, doc, getDoc, getDocs } from "firebase/firestore";
+import { collection, getDocs } from "firebase/firestore";
 import { db } from '../../config'
 
 // fetching width and height of the device
@@ -12,8 +12,8 @@ const { width, height } = Dimensions.get('window')
 
 
 export class AdminDashboard extends React.Component {
-
-  constructor(){
+ 
+  constructor(){ 
     super()
     // setting default states
     this.state = {
@@ -26,18 +26,18 @@ export class AdminDashboard extends React.Component {
       pastEventName: '',
       pastEventDate: '',
       pastEventId: ''
-    } 
-  }
-
+    }  
+  } 
+ 
   // calls itself after the component is mounted
   async componentDidMount(){
-    // fetches the current date
+    // fetches the curent date 
     var d = moment().utcOffset('+05:30').format('MMM DD YYYY')
-    
+     
     // setting state
     this.setState({
       currentDate: d
-    })
+    }) 
 
     // fetching data from firebase
     const querySnapshot = await getDocs(collection(db, "events"))
@@ -156,11 +156,6 @@ export class AdminDashboard extends React.Component {
             :
             <Text style={{ fontSize: 15, alignSelf: 'center', marginTop: height / 15 }}> No Past Events </Text>
           }
-
-
-
-
-
           </View>
       </SafeAreaView>
     )

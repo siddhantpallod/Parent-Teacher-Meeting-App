@@ -1,5 +1,5 @@
 // Importing libraries
-import { Text, View, TouchableOpacity, SafeAreaView, Dimensions } from 'react-native';
+import { Text, View, SafeAreaView, Dimensions } from 'react-native';
 import React from 'react';
 import { useEffect, useState } from "react";
 import { SocialIcon } from 'react-native-elements';
@@ -7,8 +7,8 @@ import * as WebBrowser from "expo-web-browser";
 import * as Google from "expo-auth-session/providers/google";
 
 // completes authentication
-WebBrowser.maybeCompleteAuthSession();
-
+WebBrowser.maybeCompleteAuthSession(); 
+  
 // fetches width and height of the screen
 const { width, height } = Dimensions.get('window')
 
@@ -50,7 +50,7 @@ const Login = ({ navigation }) => {
       setUserInfo(user);
 
 
-      // Routes to particualr screens as per email address
+      // Routes to particular screens as per email address
        
       if (user.email == 'support@mitgurukul.com') {
         navigation.navigate('Admin_Dashboard', {
@@ -60,7 +60,7 @@ const Login = ({ navigation }) => {
           firstName: user.given_name 
         }) 
         console.log(user) 
-      }
+      } 
         
  
 
@@ -71,7 +71,7 @@ const Login = ({ navigation }) => {
           picture: user.picture,
           firstName: user.given_name
         })
-        console.log(user)
+        console.log(user) 
       }
   
       else { 

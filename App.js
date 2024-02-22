@@ -1,16 +1,16 @@
 // Importing libraries
 import React from 'react';
+import Login from './screens/Login';
 import AdminDashboard from './screens/Admin/AdminDashboard';
 import AdminCreateEvent from './screens/Admin/AdminCreateEvent';
+import AdminViewEvent from './screens/Admin/AdminViewEvent';
 import TeacherDashboard from './screens/Teachers/TeacherDashboard';
 import TeacherViewEvent from './screens/Teachers/TeacherViewEvent';
-import {NavigationContainer} from '@react-navigation/native';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import Login from './screens/Login';
 import ParentDashboard from './screens/Parents/ParentDashboard';
 import ParentViewEvent from './screens/Parents/ParentViewEvent';
 import ParentViewTeacher from './screens/Parents/ParentViewTeacher';
-import AdminViewEvent from './screens/Admin/AdminViewEvent';
+import {NavigationContainer} from '@react-navigation/native';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
 
 // Creates stack for screens
 const Stack = createNativeStackNavigator();

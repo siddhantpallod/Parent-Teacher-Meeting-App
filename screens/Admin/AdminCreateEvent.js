@@ -1,5 +1,5 @@
 // Importing libraries
-import { Text, View, SafeAreaView, Dimensions, TouchableOpacity } from 'react-native'
+import { Text, View, Dimensions, TouchableOpacity, Alert } from 'react-native'
 import React from 'react'
 import { StatusBar } from 'expo-status-bar';
 import { Image } from 'expo-image';
@@ -7,8 +7,10 @@ import { TextInput } from 'react-native-paper';
 import { DatePickerInput } from 'react-native-paper-dates';
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { Header } from 'react-native-elements'
-import { collection, addDoc, getDocs } from "firebase/firestore";
+import { collection, addDoc } from "firebase/firestore";
 import { db } from '../../config';
+import moment from 'moment';
+
 
 // Fetching width and height of device
 const { width, height } = Dimensions.get('window')
@@ -23,8 +25,24 @@ export class AdminCreateEvent extends React.Component {
         // Sets default states
         this.state = {
             eventName: "",
-            eventDate: ""
+            eventDate: "",
+            currentDate: '',
+            tempDate: ''
         }
+    }
+
+    componentDidMount(){
+        var d = moment().utcOffset('+05:30').format('YYYY-MM-DD')
+        this.setState({
+            currentDate: d,
+            })
+
+            
+            date = d.substring(8, 11)
+            dat = Number(date)
+            console.log("Moment", dat)
+            this.setState({currentDate: dat})
+
     }
 
 
@@ -100,7 +118,16 @@ export class AdminCreateEvent extends React.Component {
                             locale="en"
                             label="Date of the Event"
                             value={this.state.eventDate}
-                            onChange={(d) => this.setState({ eventDate: d })}
+                            onChange={(d) => {
+
+                                dat = d.toString()
+                                date = dat.substring(8, 10)
+                                properDate = Number(date)
+                                this.setState({
+                                    eventDate: d,
+                                    tempDate: properDate
+                                })
+                                }}
                             inputMode="start"
                             style={{
                                 height: height / 18,
@@ -115,12 +142,13 @@ export class AdminCreateEvent extends React.Component {
                             outlineColor='#99EDE3'
                             activeOutlineColor='#99EDE3'
                             startYear={2024}
-
                         />
                     </View>
 
                     {/* Button Component */}
                     <TouchableOpacity onPress={async () => {
+                        if(this.state.eventName !== ''){
+                            if(this.state.tempDate >= this.state.currentDate){
                         const docRef = await addDoc(collection(db, "events"), {
                             eventName: this.state.eventName,
                             eventDate: this.state.eventDate
@@ -132,6 +160,15 @@ export class AdminCreateEvent extends React.Component {
                                 firstName: firstName
                             })
                         })
+                        }
+                          else{
+                            Alert.alert('Please enter appropriate date')
+                        }
+                        }
+                        else{
+                            Alert.alert("Please enter Event Name")
+                        }
+                        
                     }} style={{
                         width: width / 1.2,
                         backgroundColor: '#99EDE3',
